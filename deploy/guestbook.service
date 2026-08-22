@@ -1,0 +1,21 @@
+[Unit]
+Description=Guestbook Flask app (gunicorn)
+After=network.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/guestbook/aws-three-tier-webapp
+
+Environment=DB_HOST=guestbook-db.xxxx.us-east-1.rds.amazonaws.com
+Environment=DB_NAME=guestbook
+Environment=DB_USER=admin
+Environment=DB_SECRET_ID=guestbook/db
+Environment=AWS_REGION=us-east-1
+
+ExecStart=/usr/local/bin/gunicorn -w 2 -b 0.0.0.0:8080 app:app
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

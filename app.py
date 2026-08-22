@@ -162,10 +162,11 @@ def health():
         app.logger.error("Health check failed: %s", e)
         return "unhealthy", 503
 
+try:
+    init_db()
+except Exception as e:
+    app.logger.error("init_db failed at startup (is RDS reachable?): %s", e)
+
 
 if __name__ == "__main__":
-    try:
-        init_db()
-    except Exception as e:
-        app.logger.error("init_db failed (is RDS reachable?): %s", e)
     app.run(host="0.0.0.0", port=8080)
