@@ -1,3 +1,30 @@
 DEPLOY.md
 BUILD.md
 challenges.md
+
+# --- Local Terraform working files ---
+# .terraform/ holds downloaded providers/modules - large, machine-specific, never commit.
+**/.terraform/*
+
+*.tfstate
+*.tfstate.*
+
+*.tfvars
+!*.tfvars.example
+
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfplan
+*.tfplan.json
+
+.DS_Store
+.vscode/
+
+# NOTE: .terraform.lock.hcl is INTENTIONALLY NOT ignored.
+# It pins exact provider versions/hashes (like package-lock.json / Gemfile.lock).
+# Committing it means everyone (and CI) resolves the exact same provider build -
+# a very common thing to get wrong that's worth calling out explicitly.
