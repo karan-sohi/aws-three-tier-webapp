@@ -76,12 +76,7 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-# --- NAT Gateway (single, matches the original build's one-NAT design) ---
-# Cost note: this is the resource that bills hourly + per-GB even when idle.
-# It's also *why* this project intentionally uses one NAT (not one per AZ,
-# which is the HA-correct but ~2x-cost pattern) - a deliberate, documented
-# trade-off, which is exactly the kind of judgment call worth calling out to
-# a hiring manager reading this code.
+
 resource "aws_eip" "nat" {
   domain = "vpc"
 
