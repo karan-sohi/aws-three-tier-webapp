@@ -17,3 +17,15 @@ module "security_groups" {
   vpc_id       = module.networking.vpc_id
 }
 
+module "database" {
+  source = "../../modules/database"
+
+  project_name         = var.project_name
+  environment          = var.environment
+  private_subnet_ids   = module.networking.private_subnet_ids
+  db_security_group_id = module.security_groups.db_security_group_id
+  instance_class       = var.db_instance_class
+  db_name              = var.db_name
+  db_username          = var.db_username
+}
+
