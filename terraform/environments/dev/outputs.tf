@@ -22,3 +22,11 @@ output "app_security_group_id" {
 output "db_security_group_id" {
   value = module.security_groups.db_security_group_id
 }
+
+output "db_address" {
+  value = module.database.db_address
+}
+
+output "db_secret_arn" {
+  value = module.database.db_secret_arn
+}
