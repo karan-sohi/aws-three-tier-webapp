@@ -34,3 +34,8 @@ output "db_secret_arn" {
 output "app_instance_id" {
   value = module.app.instance_id
 }
+
+output "app_url" {
+  description = "Open this in a browser once the target is healthy."
+  value       = "http://${module.alb.alb_dns_name}"
+}
