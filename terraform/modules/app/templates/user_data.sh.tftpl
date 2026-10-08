@@ -1,0 +1,48 @@
+#!/bin/bash
+# Rendered by Terraform's templatefile() - values like the DB host are filled in before
+# the instance ever sees this script. Runs once, as root, on first boot.
+# Output goes to /var/log/cloud-init-output.log.
+set -euxo pipefail
+
+# Wait for outbound internet (private subnet -> NAT) before installing anything.
+for i in $(seq 1 30); do
+  curl -sf -o /dev/null https://pypi.org/simple/ && break
+  sleep 10
+done
+
+dnf install -y git python3-pip
+
+# Code and virtualenv live in /opt, owned by root. The service user can read and run
+# them but not modify them, and no user's home directory is involved (see incident 05).
+git clone --depth 1 --branch "${app_repo_ref}" "${app_repo_url}" /opt/guestbook/app
+python3 -m venv /opt/guestbook/venv
+/opt/guestbook/venv/bin/pip install -r /opt/guestbook/app/requirements.txt
+
+# Config lives in the unit file, so it survives reboots (see incident 03).
+cat > /etc/systemd/system/guestbook.service <<'EOF'
+[Unit]
+Description=Guestbook Flask app (gunicorn)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/opt/guestbook/app
+
+Environment=DB_HOST=${db_host}
+Environment=DB_NAME=${db_name}
+Environment=DB_USER=${db_user}
+Environment=DB_SECRET_ID=${db_secret_id}
+Environment=AWS_REGION=${aws_region}
+
+ExecStart=/opt/guestbook/venv/bin/gunicorn -w 2 -b 0.0.0.0:${app_port} app:app
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now guestbook
