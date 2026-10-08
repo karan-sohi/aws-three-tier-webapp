@@ -30,3 +30,7 @@ output "db_address" {
 output "db_secret_arn" {
   value = module.database.db_secret_arn
 }
+
+output "app_instance_id" {
+  value = module.app.instance_id
+}

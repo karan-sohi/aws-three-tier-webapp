@@ -42,6 +42,18 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
+variable "app_port" {
+  description = "Port the app listens on. Shared by the app SG rule, the instance and (later) the ALB target group."
+  type        = number
+  default     = 8080
+}
+
+variable "app_repo_url" {
+  description = "Public Git repo the instance clones at boot."
+  type        = string
+  default     = "https://github.com/karan-sohi/aws-three-tier-webapp.git"
+}
+
 variable "db_instance_class" {
   description = "RDS instance class."
   type        = string
