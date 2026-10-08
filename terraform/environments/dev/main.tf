@@ -46,3 +46,15 @@ module "app" {
   db_username   = module.database.db_username
   db_secret_arn = module.database.db_secret_arn
 }
+
+module "alb" {
+  source = "../../modules/alb"
+
+  project_name          = var.project_name
+  environment           = var.environment
+  vpc_id                = module.networking.vpc_id
+  public_subnet_ids     = module.networking.public_subnet_ids
+  alb_security_group_id = module.security_groups.alb_security_group_id
+  app_instance_id       = module.app.instance_id
+  app_port              = var.app_port
+}
